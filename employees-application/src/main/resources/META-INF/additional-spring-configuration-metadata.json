@@ -1,5 +1,12 @@
-{"properties": [{
-  "name": "spirng.mvc.problemdetails.enabled",
-  "type": "java.lang.String",
-  "description": "A description for 'spirng.mvc.problemdetails.enabled'"
-}]}
+{"properties": [
+  {
+    "name": "spirng.mvc.problemdetails.enabled",
+    "type": "java.lang.String",
+    "description": "A description for 'spirng.mvc.problemdetails.enabled'"
+  },
+  {
+    "name": "management.endpoints.health.show-details",
+    "type": "java.lang.String",
+    "description": "A description for 'management.endpoints.health.show-details'"
+  }
+]}

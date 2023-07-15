@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,12 +27,14 @@ public class EmployeeController {
 
 	@GetMapping(value = "/employees")
 	@ResponseStatus(HttpStatus.OK)
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	public List<EmployeeDTO> employees() {
 		return employeeService.employees();
 	}
 
 	@GetMapping(value = "/employees/{id}")
 	@ResponseStatus(HttpStatus.OK)
+	@PreAuthorize("hasAuthority('ROLE_USER')")
 	public EmployeeDTO employee(@PathVariable(value = "id") Integer empId) {
 		return employeeService.employee(empId);
 	}
