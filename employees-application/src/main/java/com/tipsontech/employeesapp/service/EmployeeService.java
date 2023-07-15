@@ -10,6 +10,8 @@ import com.tipsontech.employeesapp.entity.Employee;
 import com.tipsontech.employeesapp.repository.IEmployeeRepository;
 import com.tipsontech.employeesapp.util.Utility;
 
+import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationRegistry;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -19,10 +21,14 @@ public class EmployeeService {
 	@Autowired
 	private IEmployeeRepository repository;
 
+	@Autowired
+	private ObservationRegistry registry;
+
 	public List<EmployeeDTO> employees() {
 		log.info("Fetch all employees");
 
-		return repository.findAll().stream().map(Utility::mapToEmployeeDTO).toList();
+		return Observation.createNotStarted("getEmployees", registry)
+				.observe(() -> repository.findAll().stream().map(Utility::mapToEmployeeDTO)).toList();
 	}
 
 	public EmployeeDTO save(EmployeeDTO emp) {
@@ -30,13 +36,16 @@ public class EmployeeService {
 
 		Employee employee = Employee.builder().name(emp.getName()).address(emp.getAddress()).build();
 
-		return Utility.mapToEmployeeDTO(repository.save(employee));
+		return Observation.createNotStarted("saveEmployee", registry)
+				.observe(() -> Utility.mapToEmployeeDTO(repository.save(employee)));
 	}
 
 	public String delete(Integer empId) {
-		log.info("Delete employee by employee Id = {}", empId);
+		log.info("Delete employee by employee Id");
 		Employee employee = repository.findById(empId).orElseThrow(() -> Utility.notFound(empId));
+
 		repository.delete(employee);
+
 		log.info("Employee with id = {} removed", empId);
 		return "Employee with id=" + empId + " removed";
 	}
@@ -56,13 +65,18 @@ public class EmployeeService {
 	public EmployeeDTO employee(Integer empId) {
 		log.info("Fetch employee details by emp id = {}", empId);
 		Employee employee = repository.findById(empId).orElseThrow(() -> Utility.notFound(empId));
-		return Utility.mapToEmployeeDTO(employee);
+
+		return Observation.createNotStarted("getEmployeeById", registry)
+				.observe(() -> Utility.mapToEmployeeDTO(employee));
 	}
 
 	public EmployeeDTO update(EmployeeDTO emp) {
 		log.info("Update records of employee having emp id = {}", emp.getId());
 		repository.findById(emp.getId()).orElseThrow(() -> Utility.notFound(emp.getId()));
 		Employee employee = Employee.builder().id(emp.getId()).name(emp.getName()).address(emp.getAddress()).build();
-		return Utility.mapToEmployeeDTO(repository.save(employee));
+
+		return Observation.createNotStarted("updateEmployee", registry)
+				.observe(() -> Utility.mapToEmployeeDTO(repository.save(employee)));
+
 	}
 }
