@@ -58,7 +58,7 @@ The application utilizes the Problem Detail specification for reporting errors a
 
 ## Observability
 
-To enable observability, the application integrates with observability tools such as Prometheus and Grafana. The configuration for these tools can be found in the `application.yml` file. Customize the configuration as needed to connect to your observability stack.
+To enable observability, the application integrates with observability tools such as Prometheus and Grafana. The configuration for these tools can be found in the `application.properties` file. Customize the configuration as needed to connect to your observability stack.
 
 ## HttpExchange
 
