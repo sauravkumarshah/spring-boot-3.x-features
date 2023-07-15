@@ -38,4 +38,19 @@ public class RestControllerExceptionHandler {
 
 		return problemDetail;
 	}
+	
+	@ExceptionHandler(value = Exception.class)
+	public ProblemDetail onAnyException(Exception e) throws URISyntaxException {
+		ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
+				.getRequest();
+
+		problemDetail.setInstance(new URI(request.getRequestURI()));
+		problemDetail.setType(URI.create("http://api.employees.com/errors/internal-server-error"));
+		problemDetail.setTitle("Internal Server Error");
+		problemDetail.setProperty("errorCategory", "Generic");
+		problemDetail.setProperty("timestamp", Instant.now());
+
+		return problemDetail;
+	}
 }
