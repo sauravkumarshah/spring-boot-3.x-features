@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -24,7 +25,10 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tipsontech.employeesapp.dto.EmployeeDTO;
+import com.tipsontech.employeesapp.entity.Employee;
 import com.tipsontech.employeesapp.repository.IEmployeeRepository;
+import com.tipsontech.employeesapp.repository.IUserInfoRepository;
+import com.tipsontech.employeesapp.request.UserInfoRequest;
 
 @SpringBootTest
 @Testcontainers
@@ -39,9 +43,14 @@ class EmployeesApplicationTests {
 	private IEmployeeRepository employeeRepository;
 
 	@Autowired
+	private IUserInfoRepository userInfoRepository;
+
+	@Autowired
 	private ObjectMapper objectMapper;
 
 	private final static List<EmployeeDTO> employees = new ArrayList<>();
+
+	private final static List<UserInfoRequest> users = new ArrayList<>();
 
 	@Container
 	private static final MSSQLServerContainer<?> SQLSERVER_CONTAINER = new MSSQLServerContainer<>(
@@ -73,16 +82,29 @@ class EmployeesApplicationTests {
 		employees.add(emp3);
 		employees.add(emp4);
 		employees.add(emp5);
+
+		UserInfoRequest admin = UserInfoRequest.builder().name("admin").email("admin@gmail.com").password("password")
+				.roles("ROLE_ADMIN").build();
+		UserInfoRequest user = UserInfoRequest.builder().name("user").email("user@gmail.com").password("password")
+				.roles("ROLE_USER").build();
+		UserInfoRequest adminUser = UserInfoRequest.builder().name("adminuser").email("adminuser@gmail.com")
+				.password("password").roles("ROLE_ADMIN,ROLE_USER").build();
+
+		users.add(admin);
+		users.add(user);
+		users.add(adminUser);
 	}
 
 	@Test
 	@Order(value = 1)
 	void testConnectionToDatabase() {
 		Assertions.assertNotNull(employeeRepository);
+		Assertions.assertNotNull(userInfoRepository);
 	}
 
 	@Test
 	@Order(value = 2)
+	@WithMockUser(username = "admin@gmail.com", roles = { "USER", "ADMIN" })
 	void testAddEmployees() throws Exception {
 		for (EmployeeDTO employee : employees) {
 			String emp = objectMapper.writeValueAsString(employee);
@@ -94,8 +116,77 @@ class EmployeesApplicationTests {
 
 	@Test
 	@Order(value = 3)
+	@WithMockUser(username = "admin@gmail.com", roles = { "ADMIN" })
 	void testGetAllEmployees() throws Exception {
 		mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/employees")).andExpect(status().isOk());
 		Assertions.assertEquals(employees.get(3).getName(), employeeRepository.findById(4).get().getName());
+	}
+
+	@Test
+	@Order(value = 4)
+	@WithMockUser(username = "user@gmail.com", roles = { "USER" })
+	void testGetAllEmployeesFailed() throws Exception {
+		mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/employees")).andExpect(status().isForbidden());
+	}
+
+	@Test
+	@Order(value = 5)
+	@WithMockUser(username = "user@gmail.com", roles = { "USER" })
+	void testGetEmployeeById() throws Exception {
+		mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/employees/2")).andExpect(status().isOk());
+		Assertions.assertEquals(employees.get(1).getName(), employeeRepository.findById(2).get().getName());
+	}
+
+	@Test
+	@Order(value = 6)
+	@WithMockUser(username = "admin@gmail.com", roles = { "ADMIN" })
+	void testGetEmployeeByIdFailed() throws Exception {
+		mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/employees/2")).andExpect(status().isForbidden());
+		Assertions.assertEquals(employees.get(1).getName(), employeeRepository.findById(2).get().getName());
+	}
+
+	@Test
+	@Order(value = 7)
+	@WithMockUser(username = "admin@gmail.com", roles = { "USER", "ADMIN" })
+	void testDeleteEmployeeById() throws Exception {
+		mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/employees/2")).andExpect(status().isOk());
+	}
+
+	@Test
+	@Order(value = 8)
+	@WithMockUser(username = "admin@gmail.com", roles = { "USER", "ADMIN" })
+	void testUpdateEmployee() throws Exception {
+		Employee employee = Employee.builder().id(3).name("Saurav Kumar").address("India East").build();
+		String emp = objectMapper.writeValueAsString(employee);
+		mockMvc.perform(
+				MockMvcRequestBuilders.put("/api/v1/employees").contentType(MediaType.APPLICATION_JSON).content(emp))
+				.andExpect(status().isOk());
+		Assertions.assertEquals(employee.getName(), employeeRepository.findById(3).get().getName());
+	}
+
+	@Test
+	@Order(value = 9)
+	@WithMockUser(username = "admin@gmail.com", roles = { "USER", "ADMIN" })
+	void testDeleteAllEmployees() throws Exception {
+		mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/employees")).andExpect(status().isOk());
+		Assertions.assertEquals(0, employeeRepository.findAll().size());
+	}
+
+	@Test
+	void testAddUsers() throws Exception {
+		for (UserInfoRequest user : users) {
+			String usr = objectMapper.writeValueAsString(user);
+			mockMvc.perform(
+					MockMvcRequestBuilders.post("/api/v1/user").contentType(MediaType.APPLICATION_JSON).content(usr))
+					.andExpect(status().isCreated());
+		}
+		Assertions.assertEquals(3, userInfoRepository.findAll().size());
+	}
+
+	@Test
+	void testGetUserByUsername() throws Exception {
+		mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/user")).andExpect(status().isOk());
+		Assertions.assertEquals(users.get(1).getName(),
+				userInfoRepository.findByEmail("user@gmail.com").get().getName());
 	}
 }
