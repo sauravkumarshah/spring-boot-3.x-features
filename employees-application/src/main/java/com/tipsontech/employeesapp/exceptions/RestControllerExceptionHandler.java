@@ -8,6 +8,7 @@ import java.util.NoSuchElementException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -49,6 +50,21 @@ public class RestControllerExceptionHandler {
 		problemDetail.setInstance(new URI(request.getRequestURI()));
 		problemDetail.setType(URI.create("http://api.employees.com/errors/access-denied"));
 		problemDetail.setTitle("You are not authorized to access this.");
+		problemDetail.setProperty("errorCategory", "Generic");
+		problemDetail.setProperty("timestamp", Instant.now());
+
+		return problemDetail;
+	}
+
+	@ExceptionHandler(value = BadCredentialsException.class)
+	public ProblemDetail onBadCredentialsException(BadCredentialsException e) throws URISyntaxException {
+		ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, e.getMessage());
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
+				.getRequest();
+
+		problemDetail.setInstance(new URI(request.getRequestURI()));
+		problemDetail.setType(URI.create("http://api.employees.com/errors/unauthorize"));
+		problemDetail.setTitle("Invalid User Details");
 		problemDetail.setProperty("errorCategory", "Generic");
 		problemDetail.setProperty("timestamp", Instant.now());
 
