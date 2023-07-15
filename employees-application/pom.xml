@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.tipsontech.employeesapp</groupId>
-	<artifactId>employee-application</artifactId>
+	<artifactId>employees-application</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>employee-application</name>
+	<name>employees-application</name>
 	<description>Employee application based on Spring Boot 3</description>
 	<properties>
 		<java.version>17</java.version>

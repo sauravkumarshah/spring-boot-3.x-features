@@ -34,7 +34,7 @@ public class EmployeeService {
 	}
 
 	public String delete(Integer empId) {
-		log.info("Delete employee by employee Id");
+		log.info("Delete employee by employee Id = {}", empId);
 		Employee employee = repository.findById(empId).orElseThrow(() -> Utility.notFound(empId));
 		repository.delete(employee);
 		log.info("Employee with id = {} removed", empId);
