@@ -15,6 +15,8 @@ import com.tipsontech.employeesapp.dto.UserInfoDTO;
 import com.tipsontech.employeesapp.request.UserInfoRequest;
 import com.tipsontech.employeesapp.service.CustomUserDetailsService;
 
+import io.micrometer.core.annotation.Timed;
+
 @RestController
 @RequestMapping(value = "/api/v1")
 public class UserController {
@@ -30,6 +32,8 @@ public class UserController {
 
 	@GetMapping(value = "/user")
 	@ResponseStatus(HttpStatus.OK)
+	@Timed(value = "fetching.users.time", description = "Time taken to return list of users", percentiles = { 0.5,
+			0.90 })
 	public List<UserInfoDTO> users() {
 		return customUserDetailsService.users();
 	}

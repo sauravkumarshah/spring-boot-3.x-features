@@ -26,7 +26,7 @@ public class JwtSecurityConfig {
 
 		return httpSecurity.csrf(CsrfConfigurer::disable)
 				.authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-						.requestMatchers("/api/v1/user", "/api/v1/auth/login").permitAll())
+						.requestMatchers("/api/v1/user", "/api/v1/auth/login","/actuator/**").permitAll())
 				.authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
 						.requestMatchers("/api/v1/employees", "/api/v1/employees/**").authenticated())
 				.exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
