@@ -32,8 +32,6 @@ public class UserController {
 
 	@GetMapping(value = "/user")
 	@ResponseStatus(HttpStatus.OK)
-	@Timed(value = "fetching.users.time", description = "Time taken to return list of users", percentiles = { 0.5,
-			0.90 })
 	public List<UserInfoDTO> users() {
 		return customUserDetailsService.users();
 	}
