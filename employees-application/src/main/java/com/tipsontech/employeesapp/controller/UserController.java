@@ -15,6 +15,8 @@ import com.tipsontech.employeesapp.dto.UserInfoDTO;
 import com.tipsontech.employeesapp.request.UserInfoRequest;
 import com.tipsontech.employeesapp.service.CustomUserDetailsService;
 
+import io.micrometer.core.annotation.Timed;
+
 @RestController
 @RequestMapping(value = "/api/v1")
 public class UserController {
