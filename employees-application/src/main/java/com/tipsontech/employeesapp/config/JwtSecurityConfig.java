@@ -25,8 +25,9 @@ public class JwtSecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
 		return httpSecurity.csrf(CsrfConfigurer::disable)
-				.authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-						.requestMatchers("/api/v1/user", "/api/v1/auth/login","/actuator/**").permitAll())
+				.authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests.requestMatchers("/api/v1/user",
+						"/api/v1/auth/login", "/actuator/**", "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs",
+						"/v3/api-docs/**", "/v3/api-docs.yaml", "/favicon.ico").permitAll())
 				.authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
 						.requestMatchers("/api/v1/employees", "/api/v1/employees/**").authenticated())
 				.exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))

@@ -18,8 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tipsontech.employeesapp.dto.EmployeeDTO;
 import com.tipsontech.employeesapp.service.EmployeeService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 @RestController
 @RequestMapping(value = "/api/v1")
+@SecurityRequirement(name = "Authorization")
 public class EmployeeController {
 
 	@Autowired

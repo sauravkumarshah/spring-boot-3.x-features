@@ -33,12 +33,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 
+		response.setHeader("Access-Control-Allow-Origin", "*");
+		response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT, PATCH");
+
+		response.setHeader("Access-Control-Max-Age", "3600");
+		response.setHeader("Access-Control-Allow-Headers",
+				"x-requested-with,authorization,Authorization,x-auth-token,origin,content-type,accept,UserEmail,x-request-id");
+		response.setHeader("Access-Control-Expose-Headers", "olympusError, errorCode");
+
 		String requestHeader = request.getHeader("Authorization");
 
 		log.info(" Header :  {}", requestHeader);
 
 		String username = null;
 		String token = null;
+		validateHeaders(request, requestHeader, username, token);
+
+		filterChain.doFilter(request, response);
+
+	}
+
+	private void validateHeaders(HttpServletRequest request, String requestHeader, String username, String token) {
 		if (requestHeader != null && requestHeader.startsWith("Bearer")) {
 			token = requestHeader.substring(7);
 			try {
@@ -60,6 +75,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			log.info("Invalid Header Value !! ");
 		}
 
+		validateUserDetailsAndToken(request, username, token);
+	}
+
+	private void validateUserDetailsAndToken(HttpServletRequest request, String username, String token) {
 		if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
 			// fetch user details from username
@@ -78,9 +97,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			}
 
 		}
-
-		filterChain.doFilter(request, response);
-
 	}
 
 }
