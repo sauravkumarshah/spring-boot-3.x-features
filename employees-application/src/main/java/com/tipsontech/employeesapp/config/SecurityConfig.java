@@ -39,16 +39,16 @@ public class SecurityConfig {
 		return new CustomUserDetailsService();
 	}
 
-	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-
-		return httpSecurity.csrf(CsrfConfigurer::disable)
-				.authorizeHttpRequests(
-						authorizeHttpRequests -> authorizeHttpRequests.requestMatchers("/api/v1/user").permitAll())
-				.authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-						.requestMatchers("/api/v1/employees", "/api/v1/employees/**").authenticated())
-				.formLogin(Customizer.withDefaults()).build();
-	}
+//	@Bean
+//	public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+//
+//		return httpSecurity.csrf(CsrfConfigurer::disable)
+//				.authorizeHttpRequests(
+//						authorizeHttpRequests -> authorizeHttpRequests.requestMatchers("/api/v1/user").permitAll())
+//				.authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
+//						.requestMatchers("/api/v1/employees", "/api/v1/employees/**").authenticated())
+//				.formLogin(Customizer.withDefaults()).build();
+//	}
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {

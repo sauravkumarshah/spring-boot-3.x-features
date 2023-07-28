@@ -26,13 +26,12 @@ scrape_configs:
     scrape_interval: 5s
 
     static_configs:
-         - targets: ['192.168.29.135:9090']
+         - targets: ['192.168.29.114:9090']
 
   - job_name: 'Employees Application'
     metrics_path: '/actuator/prometheus'
     scrape_interval: 5s
     static_configs:
-      - targets: ['192.168.29.135:8080']
+      - targets: ['192.168.29.114:8080']
         labels:
             application: 'Employees Application'
-
