@@ -15,8 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tipsontech.employeesapp.dto.EmployeeDTO;
-import com.tipsontech.employeesapp.service.EmployeeService;
+import com.tipsontech.employeesapp.dtos.EmployeeDTO;
+import com.tipsontech.employeesapp.pojos.EmployeePOJO;
+import com.tipsontech.employeesapp.service.IEmployeeService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
@@ -26,7 +27,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 public class EmployeeController {
 
 	@Autowired
-	private EmployeeService employeeService;
+	private IEmployeeService employeeService;
 
 	@GetMapping(value = "/employees")
 	@ResponseStatus(HttpStatus.OK)
@@ -44,7 +45,7 @@ public class EmployeeController {
 
 	@PostMapping(value = "/employees")
 	@ResponseStatus(HttpStatus.CREATED)
-	public EmployeeDTO save(@RequestBody EmployeeDTO emp) {
+	public EmployeeDTO save(@RequestBody EmployeePOJO emp) {
 		return employeeService.save(emp);
 	}
 

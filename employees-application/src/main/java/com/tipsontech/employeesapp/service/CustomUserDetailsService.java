@@ -11,7 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.tipsontech.employeesapp.config.UserInfoUserDetails;
-import com.tipsontech.employeesapp.dto.UserInfoDTO;
+import com.tipsontech.employeesapp.dtos.UserInfoDTO;
 import com.tipsontech.employeesapp.entity.UserInfo;
 import com.tipsontech.employeesapp.repository.IUserInfoRepository;
 import com.tipsontech.employeesapp.request.UserInfoRequest;

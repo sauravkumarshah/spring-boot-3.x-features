@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tipsontech.employeesapp.dto.JwtRequest;
-import com.tipsontech.employeesapp.dto.JwtResponse;
+import com.tipsontech.employeesapp.dtos.JwtRequest;
+import com.tipsontech.employeesapp.dtos.JwtResponse;
 import com.tipsontech.employeesapp.security.JwtService;
 
 @RestController

@@ -1,16 +1,11 @@
 package com.tipsontech.employeesapp.entity;
 
-import java.sql.Timestamp;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
-import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,21 +17,25 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "employee")
-public class Employee {
+@Table(name = "address")
+public class Address {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "emp_id")
-	private Integer empId;
+	@Column(name = "address_id")
+	private Integer addressId;
 
-	@Column(name = "emp_name", length = 15)
-	private String name;
+	@Column(name = "city", length = 10)
+	private String city;
 
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "address_id")
-	@PrimaryKeyJoinColumn(name = "address")
-	private Address address;
-	
-	@Column(name = "timestamp")
-	private Timestamp timestamp;
+	@Column(name = "state", length = 10)
+	private String state;
+
+	@Column(name = "country", length = 10)
+	private String country;
+
+	@Column(name = "zipcode", length = 10)
+	private String zipcode;
+
+	@OneToOne(mappedBy = "address")
+	private Employee employee;
 }
