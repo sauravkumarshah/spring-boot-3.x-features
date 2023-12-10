@@ -24,8 +24,10 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tipsontech.employeesapp.dto.EmployeeDTO;
+import com.tipsontech.employeesapp.entity.Address;
 import com.tipsontech.employeesapp.entity.Employee;
+import com.tipsontech.employeesapp.pojos.AddressPOJO;
+import com.tipsontech.employeesapp.pojos.EmployeePOJO;
 import com.tipsontech.employeesapp.repository.IEmployeeRepository;
 import com.tipsontech.employeesapp.repository.IUserInfoRepository;
 import com.tipsontech.employeesapp.request.UserInfoRequest;
@@ -48,7 +50,7 @@ class EmployeesApplicationTests {
 	@Autowired
 	private ObjectMapper objectMapper;
 
-	private final static List<EmployeeDTO> employees = new ArrayList<>();
+	private final static List<EmployeePOJO> employees = new ArrayList<>();
 
 	private final static List<UserInfoRequest> users = new ArrayList<>();
 
@@ -71,11 +73,13 @@ class EmployeesApplicationTests {
 
 	static {
 
-		EmployeeDTO emp1 = EmployeeDTO.builder().name("test emp1").address("address1").build();
-		EmployeeDTO emp2 = EmployeeDTO.builder().name("test emp2").address("address2").build();
-		EmployeeDTO emp3 = EmployeeDTO.builder().name("test emp3").address("address3").build();
-		EmployeeDTO emp4 = EmployeeDTO.builder().name("test emp4").address("address4").build();
-		EmployeeDTO emp5 = EmployeeDTO.builder().name("test emp5").address("address5").build();
+		AddressPOJO address = AddressPOJO.builder().city("city1").state("state1").country("country1").build();
+
+		EmployeePOJO emp1 = EmployeePOJO.builder().name("test emp1").address(address).build();
+		EmployeePOJO emp2 = EmployeePOJO.builder().name("test emp2").address(address).build();
+		EmployeePOJO emp3 = EmployeePOJO.builder().name("test emp3").address(address).build();
+		EmployeePOJO emp4 = EmployeePOJO.builder().name("test emp4").address(address).build();
+		EmployeePOJO emp5 = EmployeePOJO.builder().name("test emp5").address(address).build();
 
 		employees.add(emp1);
 		employees.add(emp2);
@@ -106,7 +110,7 @@ class EmployeesApplicationTests {
 	@Order(value = 2)
 	@WithMockUser(username = "admin@gmail.com", roles = { "USER", "ADMIN" })
 	void testAddEmployees() throws Exception {
-		for (EmployeeDTO employee : employees) {
+		for (EmployeePOJO employee : employees) {
 			String emp = objectMapper.writeValueAsString(employee);
 			mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/employees").contentType(MediaType.APPLICATION_JSON)
 					.content(emp)).andExpect(status().isCreated());
@@ -156,7 +160,8 @@ class EmployeesApplicationTests {
 	@Order(value = 8)
 	@WithMockUser(username = "admin@gmail.com", roles = { "USER", "ADMIN" })
 	void testUpdateEmployee() throws Exception {
-		Employee employee = Employee.builder().id(3).name("Saurav Kumar").address("India East").build();
+		Address address = Address.builder().city("Ranchi").state("Jharkhand").country("India East").build();
+		Employee employee = Employee.builder().empId(3).name("Saurav Kumar").address(address).build();
 		String emp = objectMapper.writeValueAsString(employee);
 		mockMvc.perform(
 				MockMvcRequestBuilders.put("/api/v1/employees").contentType(MediaType.APPLICATION_JSON).content(emp))

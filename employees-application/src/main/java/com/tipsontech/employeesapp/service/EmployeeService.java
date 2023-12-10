@@ -1,12 +1,15 @@
 package com.tipsontech.employeesapp.service;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.tipsontech.employeesapp.dto.EmployeeDTO;
+import com.tipsontech.employeesapp.dtos.EmployeeDTO;
+import com.tipsontech.employeesapp.entity.Address;
 import com.tipsontech.employeesapp.entity.Employee;
+import com.tipsontech.employeesapp.pojos.EmployeePOJO;
 import com.tipsontech.employeesapp.repository.IEmployeeRepository;
 import com.tipsontech.employeesapp.util.Utility;
 
@@ -16,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-public class EmployeeService {
+public class EmployeeService implements IEmployeeService{
 
 	@Autowired
 	private IEmployeeRepository repository;
@@ -31,10 +34,14 @@ public class EmployeeService {
 				.observe(() -> repository.findAll().stream().map(Utility::mapToEmployeeDTO)).toList();
 	}
 
-	public EmployeeDTO save(EmployeeDTO emp) {
+	public EmployeeDTO save(EmployeePOJO emp) {
 		log.info("Save employee data : {}", emp);
 
-		Employee employee = Employee.builder().name(emp.getName()).address(emp.getAddress()).build();
+		Address address = Address.builder().city(emp.getAddress().getCity()).state(emp.getAddress().getState())
+				.country(emp.getAddress().getCountry()).zipcode(emp.getAddress().getZipcode()).build();
+
+		Employee employee = Employee.builder().name(emp.getName()).address(address)
+				.timestamp(new Timestamp(System.currentTimeMillis())).build();
 
 		return Observation.createNotStarted("saveEmployee", registry)
 				.observe(() -> Utility.mapToEmployeeDTO(repository.save(employee)));
@@ -71,9 +78,14 @@ public class EmployeeService {
 	}
 
 	public EmployeeDTO update(EmployeeDTO emp) {
-		log.info("Update records of employee having emp id = {}", emp.getId());
-		repository.findById(emp.getId()).orElseThrow(() -> Utility.notFound(emp.getId()));
-		Employee employee = Employee.builder().id(emp.getId()).name(emp.getName()).address(emp.getAddress()).build();
+		log.info("Update records of employee having emp id = {}", emp.getEmpId());
+		repository.findById(emp.getEmpId()).orElseThrow(() -> Utility.notFound(emp.getEmpId()));
+
+		Address address = Address.builder().city(emp.getAddress().getCity()).state(emp.getAddress().getState())
+				.country(emp.getAddress().getCountry()).zipcode(emp.getAddress().getZipcode()).build();
+
+		Employee employee = Employee.builder().empId(emp.getEmpId()).name(emp.getName()).address(address)
+				.timestamp(new Timestamp(System.currentTimeMillis())).build();
 
 		return Observation.createNotStarted("updateEmployee", registry)
 				.observe(() -> Utility.mapToEmployeeDTO(repository.save(employee)));

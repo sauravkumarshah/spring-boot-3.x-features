@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tipsontech.employeesapp.dto.UserInfoDTO;
+import com.tipsontech.employeesapp.dtos.UserInfoDTO;
 import com.tipsontech.employeesapp.request.UserInfoRequest;
 import com.tipsontech.employeesapp.service.CustomUserDetailsService;
 
